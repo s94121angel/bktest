@@ -1,0 +1,30 @@
+name: remodelingCI
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+jobs:    
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: build docker-image
+      run: |
+        pushd ./
+        make build-image
+        popd
+    - name: Login to Dockerhub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}     
+    - name: push docker-image
+      run: |
+        pushd ./
+        make push-image
+        popd
